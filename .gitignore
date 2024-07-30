@@ -1,4 +1,8 @@
 target/
+logs/
+testdb.trace.db
+testdb.mv.db
+
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/

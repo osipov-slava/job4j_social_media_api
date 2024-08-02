@@ -5,10 +5,10 @@
 
 
 ### Technologies
-Spring Boot, Spring Data JPA
+Spring Boot, Spring Data JPA, Liquibase Migration, JUnit 5, AssertJ, Checkstyle
 
 ### Environment
-Java 17, Maven 3.9.2
+Java 17, Maven 3.9.2, PostgreSQL 16
 
 ### Author
 Viacheslav Osipov  

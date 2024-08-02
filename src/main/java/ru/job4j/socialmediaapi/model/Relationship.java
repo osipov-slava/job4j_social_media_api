@@ -27,7 +27,8 @@ public class Relationship {
     @JoinColumn(name = "partner_id")
     private User partner;
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type_friend")
     private Type type;
 
 }

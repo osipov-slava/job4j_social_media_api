@@ -40,7 +40,7 @@ public class Post {
     @JoinColumn(name = "to_id")
     private User toUser;
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.EAGER)
     @JoinColumn(name = "post_id")
     private List<File> files = new ArrayList<>();
 

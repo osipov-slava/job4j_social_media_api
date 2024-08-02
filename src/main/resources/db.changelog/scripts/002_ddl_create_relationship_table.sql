@@ -1,4 +1,4 @@
-CREATE TABLE friends
+CREATE TABLE relationship
 (
     id          serial PRIMARY KEY,
     user_id     int not null REFERENCES web_user (id),

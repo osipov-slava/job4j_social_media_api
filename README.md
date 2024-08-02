@@ -5,7 +5,7 @@
 
 
 ### Technologies
-Spring Boot
+Spring Boot, Spring Data JPA
 
 ### Environment
 Java 17, Maven 3.9.2

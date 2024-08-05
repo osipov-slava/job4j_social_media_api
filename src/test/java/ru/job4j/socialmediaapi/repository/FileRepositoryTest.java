@@ -44,10 +44,27 @@ public class FileRepositoryTest {
         file2.setName("file2.txt");
         fileRepository.save(file1);
         fileRepository.save(file2);
+
         var expected = List.of(file1, file2);
         var actual = fileRepository.findAll();
         assertThat(actual).hasSize(2);
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
+    }
+
+    @Test
+    public void whenSaveThenDelete() {
+        var file1 = new File();
+        file1.setPath("folder/");
+        file1.setName("file1.txt");
+        fileRepository.save(file1);
+
+        var actual = fileRepository.findById(file1.getId());
+        assertThat(actual.isPresent()).isTrue();
+
+        var result = fileRepository.deleteFileById(file1.getId());
+        assertThat(result).isEqualTo(1);
+        actual = fileRepository.findById(file1.getId());
+        assertThat(actual.isPresent()).isFalse();
     }
 
 }

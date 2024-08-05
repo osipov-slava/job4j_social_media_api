@@ -7,9 +7,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
-import ru.job4j.socialmediaapi.model.File;
-import ru.job4j.socialmediaapi.model.Post;
-import ru.job4j.socialmediaapi.model.User;
+import ru.job4j.socialmediaapi.model.*;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -33,9 +31,13 @@ public class PostRepositoryTest {
     @Autowired
     private FileRepository fileRepository;
 
+    @Autowired
+    RelationshipRepository relationshipRepository;
+
     @BeforeEach
     public void setUp() {
         fileRepository.deleteAll();
+        relationshipRepository.deleteAll();
         postRepository.deleteAll();
         userRepository.deleteAll();
     }
@@ -43,6 +45,7 @@ public class PostRepositoryTest {
     @AfterAll
     public void clearAll() {
         fileRepository.deleteAll();
+        relationshipRepository.deleteAll();
         postRepository.deleteAll();
         userRepository.deleteAll();
     }
@@ -58,6 +61,30 @@ public class PostRepositoryTest {
         user2.setPassword("password");
         userRepository.save(user2);
         return List.of(user1, user2);
+    }
+
+    private Post initFirstPost(User from, User to) {
+        var post = new Post();
+        post.setFromUser(from);
+        post.setToUser(to);
+        post.setTitle("Hi. Its my first message");
+        post.setDescription("So. Would you like to go smwh?");
+        post.setCreated(LocalDateTime.now(ZoneId.of("UTC"))
+                .truncatedTo(ChronoUnit.SECONDS));
+        post.setIsActive(true);
+        return post;
+    }
+
+    private Post initSecondPost(User from, User to) {
+        var post2 = new Post();
+        post2.setFromUser(from);
+        post2.setToUser(to);
+        post2.setTitle("Hello");
+        post2.setDescription("I'm busy now");
+        post2.setCreated(LocalDateTime.now(ZoneId.of("UTC"))
+                .truncatedTo(ChronoUnit.SECONDS));
+        post2.setIsActive(true);
+        return post2;
     }
 
     private List<Post> initPostsWithDifferentDates(User userFrom, User userTo) {
@@ -80,14 +107,7 @@ public class PostRepositoryTest {
     public void whenSavePostThenFindById() {
         var users = initUsers();
 
-        var post = new Post();
-        post.setFromUser(users.get(0));
-        post.setToUser(users.get(1));
-        post.setTitle("Hi. Its my first message");
-        post.setDescription("So. Would you like to go smwh?");
-        post.setCreated(LocalDateTime.now(ZoneId.of("UTC"))
-                .truncatedTo(ChronoUnit.SECONDS));
-        post.setIsActive(true);
+        var post = initFirstPost(users.get(0), users.get(1));
 
         var file1 = new File();
         file1.setPath("folder/");
@@ -111,27 +131,13 @@ public class PostRepositoryTest {
     public void whenFindAllThenReturnAllPosts() {
         var users = initUsers();
 
-        var post = new Post();
-        post.setFromUser(users.get(0));
-        post.setToUser(users.get(1));
-        post.setTitle("Hi. Its my first message");
-        post.setDescription("So. Would you like to go smwh?");
-        post.setCreated(LocalDateTime.now(ZoneId.of("UTC"))
-                .truncatedTo(ChronoUnit.SECONDS));
-        post.setIsActive(true);
+        var post = initFirstPost(users.get(0), users.get(1));
         postRepository.save(post);
 
-        var post2 = new Post();
-        post2.setFromUser(users.get(1));
-        post2.setToUser(users.get(0));
-        post2.setTitle("Hello");
-        post2.setDescription("I'm busy now");
-        post2.setCreated(LocalDateTime.now(ZoneId.of("UTC"))
-                .truncatedTo(ChronoUnit.SECONDS));
-        post2.setIsActive(true);
+        var post2 = initSecondPost(users.get(1), users.get(0));
         postRepository.save(post2);
-        var expected = List.of(post, post2);
 
+        var expected = List.of(post, post2);
         var posts = postRepository.findAll();
         assertThat(posts).hasSize(2);
         assertThat(posts).usingRecursiveComparison().isEqualTo(expected);
@@ -143,23 +149,10 @@ public class PostRepositoryTest {
         var userFrom = users.get(0);
         var userTo = users.get(1);
 
-        var post = new Post();
-        post.setFromUser(userFrom);
-        post.setToUser(userTo);
-        post.setTitle("Hi. Its my first message");
-        post.setDescription("So. Would you like to go smwh?");
-        post.setCreated(LocalDateTime.now(ZoneId.of("UTC"))
-                .truncatedTo(ChronoUnit.SECONDS));
-        post.setIsActive(true);
+        var post = initFirstPost(users.get(0), users.get(1));
         postRepository.save(post);
 
-        var post2 = new Post();
-        post2.setFromUser(userFrom);
-        post2.setToUser(userTo);
-        post2.setTitle("Where are you?");
-        post2.setCreated(LocalDateTime.now(ZoneId.of("UTC"))
-                .truncatedTo(ChronoUnit.SECONDS));
-        post2.setIsActive(true);
+        var post2 = initSecondPost(users.get(0), users.get(1));
         postRepository.save(post2);
 
         var expected = List.of(post, post2);
@@ -202,6 +195,68 @@ public class PostRepositoryTest {
         var expected = posts.subList(3, 5);
 
         var actual = postRepository.getPostsByOrderByCreated(PageRequest.of(1, 3));
+        assertThat(actual.getContent().size()).isEqualTo(2);
+        assertThat(actual.getContent()).usingRecursiveComparison().isEqualTo(expected);
+    }
+
+    @Test
+    public void whenSavePostThenUpdatePostMessage() {
+        var users = initUsers();
+
+        var post = initFirstPost(users.get(0), users.get(1));
+        postRepository.save(post);
+        var result = postRepository.updatePostMessage("Title2", "Description2", post);
+        assertThat(result).isEqualTo(1);
+
+        var actual = postRepository.getPostById(post.getId());
+        assertThat(actual.isPresent()).isTrue();
+        assertThat(actual.get().getTitle()).isEqualTo("Title2");
+        assertThat(actual.get().getDescription()).isEqualTo("Description2");
+    }
+
+    @Test
+    public void whenSaveThenDelete() {
+        var users = initUsers();
+
+        var post = initFirstPost(users.get(0), users.get(1));
+        postRepository.save(post);
+
+        var actual = postRepository.findById(post.getId());
+        assertThat(actual.isPresent()).isTrue();
+
+        var result = postRepository.deletePostById(post.getId());
+        assertThat(result).isEqualTo(1);
+        actual = postRepository.findById(post.getId());
+        assertThat(actual.isPresent()).isFalse();
+    }
+
+    @Test
+    public void whenSavePostsThenFindAllSubscriberPosts() {
+        List<User> users = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            users.add(new User(null, "email %d".formatted(i), "password %d".formatted(i), null));
+        }
+        userRepository.saveAll(users);
+
+        var relationship1 = new Relationship(null, users.get(1), users.get(0), null);
+        var relationship2 = new Relationship(null, users.get(2), users.get(0), Type.SUBSCRIBER);
+        var relationship3 = new Relationship(null, users.get(3), users.get(0), Type.SUBSCRIBER);
+        var relationships = List.of(relationship1, relationship2, relationship3);
+        relationshipRepository.saveAll(relationships);
+        System.out.println(relationships);
+
+        var posts = initPostsWithDifferentDates(users.get(1), users.get(0));
+        posts.get(1).setFromUser(users.get(2));
+        posts.get(2).setFromUser(users.get(2));
+        posts.get(3).setFromUser(users.get(3));
+        posts.get(4).setFromUser(users.get(3));
+        postRepository.saveAll(posts);
+
+        List<Post> expected = new ArrayList<>();
+        expected.add(posts.get(3));
+        expected.add(posts.get(4));
+
+        var actual = postRepository.getPostsAllSubscribers(PageRequest.of(1, 2), users.get(0));
         assertThat(actual.getContent().size()).isEqualTo(2);
         assertThat(actual.getContent()).usingRecursiveComparison().isEqualTo(expected);
     }

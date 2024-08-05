@@ -1,6 +1,7 @@
 target/
 logs/
 log/
+*.log
 testdb.trace.db
 testdb.mv.db
 

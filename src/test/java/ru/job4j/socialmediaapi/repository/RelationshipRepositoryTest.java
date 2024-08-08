@@ -50,6 +50,24 @@ public class RelationshipRepositoryTest {
     }
 
     @Test
+    public void whenSaveRelationShipThenFindByUserAndPartner() {
+        var users = initUsers();
+
+        var relationship = new Relationship();
+        relationship.setUser(users.get(0));
+        relationship.setPartner(users.get(1));
+        relationship.setType(Type.APPLICANT);
+        relationshipRepository.save(relationship);
+
+        var actual = relationshipRepository.findByUserAndPartner(users.get(1), users.get(0));
+        assertThat(actual.isPresent()).isFalse();
+
+        actual = relationshipRepository.findByUserAndPartner(users.get(0), users.get(1));
+        assertThat(actual.isPresent()).isTrue();
+        assertThat(actual.get()).usingRecursiveComparison().isEqualTo(relationship);
+    }
+
+    @Test
     public void whenSaveRelationshipThenFindById() {
         var users = initUsers();
 
@@ -101,6 +119,24 @@ public class RelationshipRepositoryTest {
         var actual = relationshipRepository.findAll();
         assertThat(actual).hasSize(2);
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
+    }
+
+    @Test
+    public void whenSaveRelationshipThenUpdateTypeByUsers() {
+        var users = initUsers();
+
+        var relationship = new Relationship();
+        relationship.setUser(users.get(0));
+        relationship.setPartner(users.get(1));
+        relationship.setType(Type.APPLICANT);
+        relationshipRepository.save(relationship);
+
+        relationshipRepository.updateType(users.get(0), users.get(1), Type.FRIEND);
+        relationship.setType(Type.FRIEND);
+
+        var actual = relationshipRepository.findByUserAndPartner(users.get(0), users.get(1));
+        assertThat(actual.isPresent()).isTrue();
+        assertThat(actual.get()).usingRecursiveComparison().isEqualTo(relationship);
     }
 
 }

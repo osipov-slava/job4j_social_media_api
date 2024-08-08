@@ -10,7 +10,6 @@ import org.springframework.data.domain.PageRequest;
 import ru.job4j.socialmediaapi.model.*;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -69,7 +68,7 @@ public class PostRepositoryTest {
         post.setToUser(to);
         post.setTitle("Hi. Its my first message");
         post.setDescription("So. Would you like to go smwh?");
-        post.setCreated(LocalDateTime.now(ZoneId.of("UTC"))
+        post.setCreated(LocalDateTime.now()
                 .truncatedTo(ChronoUnit.SECONDS));
         post.setIsActive(true);
         return post;
@@ -81,7 +80,7 @@ public class PostRepositoryTest {
         post2.setToUser(to);
         post2.setTitle("Hello");
         post2.setDescription("I'm busy now");
-        post2.setCreated(LocalDateTime.now(ZoneId.of("UTC"))
+        post2.setCreated(LocalDateTime.now()
                 .truncatedTo(ChronoUnit.SECONDS));
         post2.setIsActive(true);
         return post2;
@@ -94,7 +93,7 @@ public class PostRepositoryTest {
             post.setFromUser(userFrom);
             post.setToUser(userTo);
             post.setTitle("title %d%n".formatted(i));
-            post.setCreated(LocalDateTime.now(ZoneId.of("UTC"))
+            post.setCreated(LocalDateTime.now()
                     .truncatedTo(ChronoUnit.SECONDS)
                     .minusDays(i));
             post.setIsActive(true);
@@ -170,10 +169,8 @@ public class PostRepositoryTest {
         List<Post> posts = initPostsWithDifferentDates(users.get(0), users.get(1));
         postRepository.saveAll(posts);
 
-        var after = LocalDateTime.now(ZoneId.of("UTC"))
-                .minusDays(4);
-        var before = LocalDateTime.now(ZoneId.of("UTC"))
-                .minusHours(1);
+        var after = LocalDateTime.now().minusDays(4);
+        var before = LocalDateTime.now().minusHours(1);
 
         var expected = posts.subList(1, 4);
         var actual = postRepository.getPostsByCreatedBetween(after, before);
@@ -187,11 +184,7 @@ public class PostRepositoryTest {
         List<Post> posts = initPostsWithDifferentDates(users.get(0), users.get(1));
         postRepository.saveAll(posts);
 
-        posts.sort(new Comparator<Post>() {
-            public int compare(Post o1, Post o2) {
-                return o1.getCreated().compareTo(o2.getCreated());
-            }
-        });
+        posts.sort(Comparator.comparing(Post::getCreated));
         var expected = posts.subList(3, 5);
 
         var actual = postRepository.getPostsByOrderByCreated(PageRequest.of(1, 3));

@@ -6,6 +6,9 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ru.job4j.socialmediaapi.model.File;
+import ru.job4j.socialmediaapi.model.Post;
+
+import java.util.List;
 
 public interface FileRepository extends JpaRepository<File, Long> {
 
@@ -16,5 +19,7 @@ public interface FileRepository extends JpaRepository<File, Long> {
             where f.id = :id
             """)
     int deleteFileById(@Param("id") Long id);
+
+    List<File> findByPost(Post post);
 
 }

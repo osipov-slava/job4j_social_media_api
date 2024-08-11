@@ -24,6 +24,25 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Page<Post> getPostsByOrderByCreated(Pageable pageable);
 
+    @Query("""
+                select p from Post as p
+                join Relationship as r on p.fromUser = r.user
+                where r.partner = :user and r.type = 'SUBSCRIBER'
+                order by p.created desc
+            """)
+    Page<Post> getPostsAllSubscribers(Pageable pageable, @Param("user") User user);
+
+    @Transactional
+    @Modifying
+    @Query("""
+            update Post p
+            set p.title = :#{#post.title},
+            p.description = :#{#post.description},
+            p.isActive = :#{#post.isActive}
+            where p.id = :#{#post.id}
+            """)
+    int update(@Param("post") Post post);
+
     @Transactional
     @Modifying(clearAutomatically = true)
     @Query("""
@@ -40,13 +59,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                 where p.id = ?1
             """)
     int deletePostById(Long id);
-
-    @Query("""
-                select p from Post as p
-                join Relationship as r on p.fromUser = r.user
-                where r.partner = :user and r.type = 'SUBSCRIBER'
-                order by p.created desc
-            """)
-    Page<Post> getPostsAllSubscribers(Pageable pageable, @Param("user") User user);
 
 }

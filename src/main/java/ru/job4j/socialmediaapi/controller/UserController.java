@@ -51,9 +51,13 @@ public class UserController {
     }
 
     @PatchMapping
-    @ResponseStatus(HttpStatus.OK)
-    public void change(@RequestBody User user) {
-        userService.update(user);
+    public ResponseEntity<Void> change(@RequestBody User user) {
+        try {
+            userService.update(user);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{userId}")

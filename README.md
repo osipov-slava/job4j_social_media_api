@@ -7,7 +7,7 @@ none, applicant, subscriber, friend. Each user can publish Post to concrete user
 Subscriber and friend could see posts of user, which they follow 
 
 ### Technologies
-Spring Boot 3.3.2, Spring Data JPA, Liquibase Migration, JUnit 5, AssertJ, Checkstyle
+Spring Boot 3.3.2, REST API, Spring Data JPA, Liquibase Migration, JUnit 5, AssertJ, Checkstyle
 
 ### Environment
 Java 17, Maven 3.9.2, PostgreSQL 16

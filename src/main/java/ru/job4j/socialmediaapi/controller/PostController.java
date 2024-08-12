@@ -52,13 +52,9 @@ public class PostController {
     }
 
     @PatchMapping
-    public ResponseEntity<Void> change(@RequestBody Post post, @RequestBody List<File> files) {
-        try {
-            postService.updateCascade(post, files);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
+    @ResponseStatus(HttpStatus.OK)
+    public void change(@RequestBody Post post, @RequestBody List<File> files) {
+        postService.updateCascade(post, files);
     }
 
     @DeleteMapping("/{postId}")

@@ -239,7 +239,7 @@ public class PostRepositoryTest {
         public void whenSavePostsThenFindAllSubscriberPosts() {
             List<User> users = new ArrayList<>();
             for (int i = 0; i < 4; i++) {
-                users.add(new User(null, "email %d".formatted(i), "password %d".formatted(i), null));
+                users.add(new User(null, "email%d@mail.com".formatted(i), "password %d".formatted(i), null));
             }
             userRepository.saveAll(users);
 

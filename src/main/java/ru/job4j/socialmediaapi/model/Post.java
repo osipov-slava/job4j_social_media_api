@@ -1,10 +1,13 @@
 package ru.job4j.socialmediaapi.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,10 +26,13 @@ public class Post {
     @EqualsAndHashCode.Include
     private Long id;
 
+    @NotNull
+    @Length(min = 2)
     private String title;
 
     private String description;
 
+    @PastOrPresent
     private LocalDateTime created;
 
     @Column(name = "is_active")

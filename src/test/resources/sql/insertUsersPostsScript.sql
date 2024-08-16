@@ -4,7 +4,7 @@ truncate table web_user restart identity;
 SET REFERENTIAL_INTEGRITY TO TRUE;
 
 insert into web_user (email, password, timezone)
-values ('All', '', null),
+values ('All@mail.com', 'sdfhsdthwrdfv', null),
        ('John@gmail.com', 'password1', null),
        ('Kate@gmail.com', 'password2', null),
        ('Steve@mail.com', 'password3', null);

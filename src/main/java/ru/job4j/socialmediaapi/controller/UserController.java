@@ -2,6 +2,7 @@ package ru.job4j.socialmediaapi.controller;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -61,7 +62,8 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> removeById(@PathVariable long userId) {
+    public ResponseEntity<Void> removeById(@PathVariable("userId")
+                                               @Positive long userId) {
         if (userService.deleteById(userId)) {
             return ResponseEntity.noContent().build();
         }

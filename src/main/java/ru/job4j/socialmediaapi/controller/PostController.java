@@ -2,6 +2,7 @@ package ru.job4j.socialmediaapi.controller;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,7 +59,8 @@ public class PostController {
     }
 
     @DeleteMapping("/{postId}")
-    public ResponseEntity<Void> removeById(@PathVariable long postId) {
+    public ResponseEntity<Void> removeById(@PathVariable("postId")
+                                               @Positive long postId) {
         if (postService.deleteById(postId)) {
             return ResponseEntity.noContent().build();
         }

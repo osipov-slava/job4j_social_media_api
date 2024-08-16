@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import ru.job4j.socialmediaapi.model.Relationship;
 import ru.job4j.socialmediaapi.model.Type;
 import ru.job4j.socialmediaapi.model.User;
@@ -21,6 +22,6 @@ public interface RelationshipRepository extends JpaRepository<Relationship, Long
                 set r.type = :type
                 where r.user = :user and r.partner = :partner
             """)
-    void updateType(User user, User partner, Type type);
+    void updateType(@Param("user") User user, @Param("partner") User partner, @Param("type") Type type);
 
 }

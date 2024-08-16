@@ -1,5 +1,6 @@
 package ru.job4j.socialmediaapi.service;
 
+import ru.job4j.socialmediaapi.dto.UserPostsDto;
 import ru.job4j.socialmediaapi.model.File;
 import ru.job4j.socialmediaapi.model.Post;
 
@@ -21,5 +22,7 @@ public interface PostService {
     void delete(Post post);
 
     List<Post> findAll();
+
+    List<UserPostsDto> findAllByUsersId(List<Long> userIds);
 
 }

@@ -32,6 +32,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             """)
     Page<Post> getPostsAllSubscribers(Pageable pageable, @Param("user") User user);
 
+    @Query("""
+                select p from Post as p
+                where p.fromUser in :users and p.isActive = true
+            """)
+    List<Post> findAllByFromUsers(@Param("users") List<User> users);
+
     @Transactional
     @Modifying
     @Query("""
@@ -59,5 +65,4 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                 where p.id = ?1
             """)
     int deletePostById(Long id);
-
 }

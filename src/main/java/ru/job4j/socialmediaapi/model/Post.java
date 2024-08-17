@@ -1,5 +1,6 @@
 package ru.job4j.socialmediaapi.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
@@ -28,8 +29,10 @@ public class Post {
 
     @NotNull
     @Length(min = 2)
+    @Schema(description = "Short description", example = "New topic")
     private String title;
 
+    @Schema(description = "Long description", example = "Let's tall about it")
     private String description;
 
     @PastOrPresent

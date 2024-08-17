@@ -1,5 +1,11 @@
 package ru.job4j.socialmediaapi.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -12,13 +18,22 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.job4j.socialmediaapi.model.User;
 import ru.job4j.socialmediaapi.service.UserService;
 
+@Tag(name = "UserController", description = "UserController management APIs")
+@Validated
 @AllArgsConstructor
 @RestController
-@Validated
 @RequestMapping("api/user")
 public class UserController {
 
     private final UserService userService;
+
+    @Operation(
+            summary = "Save new User",
+            description = "Save new User object. The response is User object with Id",
+            tags = {"User", "post"})
+    @ApiResponses({
+            @ApiResponse(responseCode = "201",
+                    content = {@Content(schema = @Schema(implementation = User.class), mediaType = "application/json")})})
 
     @PostMapping
     public ResponseEntity<User> save(@RequestBody User user) {
@@ -33,6 +48,15 @@ public class UserController {
                 .body(user);
     }
 
+    @Operation(
+            summary = "Retrieve a User by Id",
+            description = "Get a User object by specifying its Id. The response is User object",
+            tags = {"User", "get"})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200",
+                    content = {@Content(schema = @Schema(implementation = User.class), mediaType = "application/json")}),
+            @ApiResponse(responseCode = "400", description = "Not found")})
+
     @GetMapping("/{userId}")
     public ResponseEntity<User> get(@PathVariable("userId")
                                     @NotNull
@@ -43,15 +67,15 @@ public class UserController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PutMapping
-    public ResponseEntity<Void> update(@RequestBody User user) {
-        if (userService.update(user)) {
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.notFound().build();
-    }
+    @Operation(
+            summary = "Put User",
+            description = "Update User object. Only and all fields: email, password, timezone. Response status only",
+            tags = {"User", "put"})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "404")})
 
-    @PatchMapping
+    @PutMapping
     public ResponseEntity<Void> change(@RequestBody User user) {
         try {
             userService.update(user);
@@ -61,9 +85,17 @@ public class UserController {
         }
     }
 
+    @Operation(
+            summary = "Delete User",
+            description = "Delete User object by id. Response status only",
+            tags = {"User", "delete"})
+    @ApiResponses({
+            @ApiResponse(responseCode = "204"),
+            @ApiResponse(responseCode = "404")})
+
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> removeById(@PathVariable("userId")
-                                               @Positive long userId) {
+                                           @Positive long userId) {
         if (userService.deleteById(userId)) {
             return ResponseEntity.noContent().build();
         }

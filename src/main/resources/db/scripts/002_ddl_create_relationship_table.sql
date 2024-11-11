@@ -1,8 +1,8 @@
 CREATE TABLE relationship
 (
-    id          serial PRIMARY KEY,
-    user_id     int not null REFERENCES web_user (id),
-    partner_id  int not null REFERENCES web_user (id),
-    type_friend varchar,
-                UNIQUE (user_id, partner_id)
+    id          SERIAL PRIMARY KEY,
+    user_id     INT NOT NULL REFERENCES web_user (id),
+    partner_id  INT NOT NULL REFERENCES web_user (id),
+    type_friend VARCHAR,
+        UNIQUE (user_id, partner_id)
 );

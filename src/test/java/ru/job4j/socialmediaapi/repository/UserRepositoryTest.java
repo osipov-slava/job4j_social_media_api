@@ -24,6 +24,7 @@ public class UserRepositoryTest {
     @Test
     public void whenSaveUserThenFindById() {
         var user = new User();
+        user.setUsername("John");
         user.setEmail("john.doe@example.com");
         user.setPassword("password");
         userRepository.save(user);
@@ -35,9 +36,11 @@ public class UserRepositoryTest {
     @Test
     public void whenFindAllThenReturnAllUsers() {
         var user1 = new User();
+        user1.setUsername("John");
         user1.setEmail("john.doe@example.com");
         user1.setPassword("password");
         var user2 = new User();
+        user2.setUsername("Jane");
         user2.setEmail("jane.doe@example.com");
         user2.setPassword("password2");
         userRepository.save(user1);

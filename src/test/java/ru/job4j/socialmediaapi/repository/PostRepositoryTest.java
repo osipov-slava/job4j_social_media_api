@@ -12,6 +12,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -62,14 +63,19 @@ public class PostRepositoryTest {
         }
 
         private List<User> initUsers() {
+            Role roleUser = new Role(1, ERole.ROLE_USER);
             var user1 = new User();
+            user1.setUsername("John");
             user1.setEmail("john.doe@example.com");
             user1.setPassword("password");
+            user1.setRoles(Set.of(roleUser));
             userRepository.save(user1);
 
             var user2 = new User();
+            user2.setUsername("Kate");
             user2.setEmail("kate.doe@example.com");
             user2.setPassword("password");
+            user2.setRoles(Set.of(roleUser));
             userRepository.save(user2);
             return List.of(user1, user2);
         }
@@ -135,7 +141,10 @@ public class PostRepositoryTest {
 
             var actual = postRepository.findById(post.getId());
             assertThat(actual).isPresent();
-            assertThat(actual.get()).usingRecursiveComparison().isEqualTo(post);
+            assertThat(actual.get())
+                    .usingRecursiveComparison()
+                    .ignoringFields("fromUser.roles", "toUser.roles")
+                    .isEqualTo(post);
         }
 
         @Test
@@ -239,7 +248,7 @@ public class PostRepositoryTest {
         public void whenSavePostsThenFindAllSubscriberPosts() {
             List<User> users = new ArrayList<>();
             for (int i = 0; i < 4; i++) {
-                users.add(new User(null, "email%d@mail.com".formatted(i), "password %d".formatted(i), null));
+                users.add(new User("Username-%d".formatted(i), "email%d@mail.com".formatted(i), "password %d".formatted(i)));
             }
             userRepository.saveAll(users);
 

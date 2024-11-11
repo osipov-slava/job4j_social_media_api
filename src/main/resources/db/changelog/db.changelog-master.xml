@@ -8,5 +8,7 @@
     <include file="../scripts/002_ddl_create_relationship_table.sql" relativeToChangelogFile="true"/>
     <include file="../scripts/003_ddl_create_web_post_table.sql" relativeToChangelogFile="true"/>
     <include file="../scripts/004_ddl_create_file_table.sql" relativeToChangelogFile="true"/>
-    <include file="../scripts/005_dml_update_web_user_1.sql" relativeToChangelogFile="true"/>
+    <include file="../scripts/005_ddl_create_roles_table.sql" relativeToChangelogFile="true"/>
+    <include file="../scripts/006_ddl_create_user_roles_table.sql" relativeToChangelogFile="true"/>
+    <include file="../scripts/007_dml_insert_roles.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>

@@ -38,11 +38,13 @@ public class RelationshipRepositoryTest {
 
     private List<User> initUsers() {
         var user1 = new User();
+        user1.setUsername("John");
         user1.setEmail("john.doe@example.com");
         user1.setPassword("password");
         userRepository.save(user1);
 
         var user2 = new User();
+        user2.setUsername("Kate");
         user2.setEmail("kate.doe@example.com");
         user2.setPassword("password");
         userRepository.save(user2);

@@ -1,9 +1,11 @@
-create table web_user
+CREATE TABLE web_user
 (
-    id          serial  primary key,
-    email       varchar not null unique,
-    password    varchar not null,
-    timezone    varchar
+    id          SERIAL  PRIMARY KEY,
+    username    VARCHAR(20) NOT NULL UNIQUE,
+    email       VARCHAR     NOT NULL UNIQUE,
+    password    VARCHAR     NOT NULL,
+    timezone    VARCHAR
 );
 
-insert into web_user (email, password, timezone) values ('All', '', null);
+INSERT INTO web_user (username, email, password, timezone)
+VALUES ('All', 'All@mail.ru', 'sd86U^$RUYF', null);

@@ -12,12 +12,14 @@ import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.job4j.socialmediaapi.model.User;
 import ru.job4j.socialmediaapi.service.UserService;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @Tag(name = "UserController", description = "UserController management APIs")
 @Validated
 @AllArgsConstructor
@@ -76,6 +78,7 @@ public class UserController {
             @ApiResponse(responseCode = "404")})
 
     @PutMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> change(@RequestBody User user) {
         try {
             userService.update(user);
@@ -94,6 +97,7 @@ public class UserController {
             @ApiResponse(responseCode = "404")})
 
     @DeleteMapping("/{userId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> removeById(@PathVariable("userId")
                                            @Positive long userId) {
         if (userService.deleteById(userId)) {
